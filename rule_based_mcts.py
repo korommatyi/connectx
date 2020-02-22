@@ -299,4 +299,5 @@ def mcts_agent(observation, configuration, score_exp: int = 3, c_1: float = 1.25
 
 
 def fine_tuned_rule_based_mcts_agent(observation, configuration):
-    return mcts_agent(observation, configuration, score_exp=2, c_1=0.8, c_2=1500, search_time_in_s=4)
+    return mcts_agent(observation, configuration, score_exp=2.26, c_1=0.7, c_2=28000,
+                      search_time_in_s=4)
