@@ -121,7 +121,7 @@ def state_transition(state: State, action: Action):
     for row in range(state.rows - 1, -1, -1):
         if b[row*state.columns + action.incolumn] == 0:
             b[row*state.columns + action.incolumn] = action.player
-            new_state = State(b, state.columns, state.rows, state.inarow)
+            new_state = State(tuple(b), state.columns, state.rows, state.inarow)
             return new_state
     return None
 
@@ -238,7 +238,7 @@ def mcts_agent(observation, configuration, score_exp: int = 3, c_1: float = 1.25
     win_score = pow(configuration.inarow, score_exp*2)
     me = observation.mark
     stats = {}
-    start_state = State(observation.board, configuration.columns, configuration.rows,
+    start_state = State(tuple(observation.board), configuration.columns, configuration.rows,
                         configuration.inarow)
     stats[start_state] = new_leaf(start_state, me, score, win_score)
 
@@ -290,7 +290,13 @@ def mcts_agent(observation, configuration, score_exp: int = 3, c_1: float = 1.25
         sim_counter += 1
 
     start_node = stats[start_state]
-    # move = random_move(start_node.Q)
-    move = argmax(start_node.Q)
-    print(f'{me}: col {move}, win prob {round(start_node["Q"][move]*100, 2)}% in time {ts - start_ts} num of simulations {sim_counter}')
+    if sum(start_node.Q) == 0:
+        move = start_node.possible_moves[0]
+    else:
+        move = argmax(start_node.Q)
+    #print(f'{me}: col {move}, win prob {round(start_node.Q[move]*100, 2)}%, sim time {ts - start_ts}, num of simulations {sim_counter}')
     return move
+
+
+def fine_tuned_rule_based_mcts_agent(observation, configuration):
+    return mcts_agent(observation, configuration, score_exp=2, c_1=0.8, c_2=1500, search_time_in_s=4)
