@@ -136,7 +136,7 @@ def f(state: State, player: int, score: Callable[[int], int], win_score: int):
     possible_moves = get_possible_moves(state)
     # if no winner and no possible moves => draw
     if not possible_moves:
-        return [0 for _ in range(state.columns)], 0
+        return [0 for _ in range(state.columns)], 0.5
 
     def win_prob(c):
         if state.board[c] != 0:
@@ -275,7 +275,7 @@ def mcts_agent(observation, configuration, score_exp: int = 3, c_1: float = 1.25
 
         last_node = node
         v = last_node.v
-        opponent_v = 0 if last_node.end_state and last_node.who_won is None else 1 - v
+        opponent_v = 1 - v
         for n, a in zip(non_leaf_nodes, actions):
             update = v if n.whose_turn == last_node.whose_turn else opponent_v
             n.Q[a] = (n.N[a] * n.Q[a] + update) / (n.N[a] + 1)
